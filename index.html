@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chindu Toy Nest</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <h2>Chindu Toy Nest</h2>
+</header>
+
+<!-- CATEGORY SECTION -->
+<section class="category-section">
+    <h3>You are interested in</h3>
+
+    <div class="categories">
+
+        <a href="products.html?category=home" class="card">
+            <img src="images/home1.jpg" alt="Home Needs">
+            <p>Home Needs</p>
+        </a>
+
+        <a href="products.html?category=gifts" class="card">
+            <img src="images/gift1.jpg" alt="Gifts">
+            <p>Gifts</p>
+        </a>
+
+        <a href="products.html?category=toys" class="card">
+            <img src="images/toy1.jpg" alt="Toys">
+            <p>Toys & Gaming</p>
+        </a>
+
+        <a href="products.html?category=electronics" class="card">
+            <img src="images/electronics.jpg" alt="Electronics">
+            <p>Electronics</p>
+        </a>
+
+    </div>
+</section>
+
+<!-- LATEST PRODUCTS SECTION -->
+<section class="category-section">
+    <h3>Latest Products</h3>
+    <div class="categories" id="latestProducts">
+        <!-- Products will load here -->
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div>
+        <h4>ABOUT US</h4>
+        <p>About Us</p>
+        <p>Privacy Policy</p>
+        <p>Terms & Conditions</p>
+        <p>Return & Exchange Policy</p>
+    </div>
+
+    <div>
+        <h4>CONTACT US</h4>
+        <p>📞 7418931545</p>
+        <p>📧 chindutoynest@gmail.com</p>
+    </div>
+</footer>
+
+<!-- WHATSAPP CHAT -->
+<a href="https://wa.me/917418931545" class="whatsapp" target="_blank">
+    💬 Chat
+</a>
+
+<!-- SCRIPT TO LOAD UPLOADED PRODUCT IMAGES -->
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let box = document.getElementById("latestProducts");
+
+if (products.length === 0) {
+    box.innerHTML = "<p style='padding:10px;'>No products added yet.</p>";
+} else {
+    products.slice(-4).reverse().forEach(p => {
+        box.innerHTML += `
+            <div class="card">
+                <img src="${p.image}" alt="${p.name}">
+                <p>${p.name}<br>₹${p.price}</p>
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>

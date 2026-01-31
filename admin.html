@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Chindu Toy Nest</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<h2 class="title">Admin Login</h2>
+
+<!-- LOGIN BOX -->
+<div class="login-box">
+    <input type="text" id="username" placeholder="Admin Username">
+    <input type="password" id="password" placeholder="Admin Password">
+    <button onclick="login()">Login</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel" style="display:none;">
+    <h3>Add Product</h3>
+
+    <input type="text" id="pname" placeholder="Product Name">
+    <input type="number" id="price" placeholder="Price">
+
+    <!-- IMAGE UPLOAD -->
+    <input type="file" id="image" accept="image/*">
+
+    <select id="category">
+        <option value="home">Home Needs</option>
+        <option value="gifts">Gifts</option>
+        <option value="toys">Toys</option>
+        <option value="electronics">Electronics</option>
+    </select>
+
+    <!-- OUT OF STOCK -->
+    <label style="display:block; margin:10px 0;">
+        <input type="checkbox" id="outOfStock">
+        Mark as Out of Stock
+    </label>
+
+    <button onclick="addProduct()">Add Product</button>
+
+    <h3>Product List</h3>
+    <ul id="productList"></ul>
+</div>
+
+<script>
+/* LOGIN */
+function login() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (user === "admin" && pass === "1234") {
+        document.querySelector(".login-box").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadProducts();
+    } else {
+        alert("Wrong username or password");
+    }
+}
+
+/* ADD PRODUCT */
+function addProduct() {
+    const name = document.getElementById("pname").value;
+    const price = document.getElementById("price").value;
+    const category = document.getElementById("category").value;
+    const imageFile = document.getElementById("image").files[0];
+    const outOfStock = document.getElementById("outOfStock").checked;
+
+    if (!name || !price || !imageFile) {
+        alert("Fill all fields and choose an image");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function () {
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+
+        products.push({
+            name,
+            price,
+            category,
+            image: reader.result,
+            outOfStock
+        });
+
+        localStorage.setItem("products", JSON.stringify(products));
+
+        document.getElementById("pname").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("image").value = "";
+        document.getElementById("outOfStock").checked = false;
+
+        loadProducts();
+    };
+    reader.readAsDataURL(imageFile);
+}
+
+/* UPDATE PRICE */
+function updatePrice(index) {
+    const newPrice = document.getElementById(`price-${index}`).value;
+
+    if (!newPrice || newPrice <= 0) {
+        alert("Enter valid price");
+        return;
+    }
+
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    products[index].price = newPrice;
+
+    localStorage.setItem("products", JSON.stringify(products));
+    loadProducts();
+}
+
+/* TOGGLE STOCK */
+function toggleStock(index) {
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    products[index].outOfStock = !products[index].outOfStock;
+
+    localStorage.setItem("products", JSON.stringify(products));
+    loadProducts();
+}
+
+/* LOAD PRODUCTS */
+function loadProducts() {
+    const list = document.getElementById("productList");
+    list.innerHTML = "";
+
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    products.forEach((p, index) => {
+        const li = document.createElement("li");
+        li.style.marginBottom = "12px";
+
+        li.innerHTML = `
+            <img src="${p.image}" width="40" height="40"
+                 style="vertical-align:middle; border-radius:5px;">
+            <strong>${p.name}</strong> (${p.category})<br>
+
+            ₹ <input type="number" id="price-${index}" value="${p.price}"
+                 style="width:80px;">
+
+            <button onclick="updatePrice(${index})">Save</button>
+
+            <strong style="color:${p.outOfStock ? 'red' : 'green'}">
+                ${p.outOfStock ? ' OUT OF STOCK' : ' IN STOCK'}
+            </strong>
+
+            <button onclick="toggleStock(${index})">
+                Toggle Stock
+            </button>
+        `;
+        list.appendChild(li);
+    });
+}
+</script>
+
+</body>
+</html>

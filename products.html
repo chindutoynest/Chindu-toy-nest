@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products - Chindu Toy Nest</title>
+    <link rel="stylesheet" href="products.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <a href="index.html">⬅ Back</a>
+    <h2 id="categoryTitle">Products</h2>
+</header>
+
+<!-- PRODUCTS SECTION -->
+<section class="product-section" id="productList">
+    <!-- Products load here -->
+</section>
+
+<script>
+/* GET CATEGORY FROM URL */
+const params = new URLSearchParams(window.location.search);
+const category = params.get("category");
+
+/* SET TITLE */
+const title = document.getElementById("categoryTitle");
+title.innerText = category ? category.toUpperCase() + " PRODUCTS" : "Products";
+
+/* GET PRODUCTS FROM LOCAL STORAGE */
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+/* FILTER BY CATEGORY */
+const filteredProducts = products.filter(p => p.category === category);
+
+const list = document.getElementById("productList");
+
+/* IF NO PRODUCTS */
+if (filteredProducts.length === 0) {
+    list.innerHTML = "<p style='padding:20px;'>No products added yet.</p>";
+}
+
+/* SHOW PRODUCTS */
+filteredProducts.forEach(p => {
+    list.innerHTML += `
+        <div class="product-card">
+            <img src="${p.image}" alt="${p.name}" class="product-img">
+
+            <h4>${p.name}</h4>
+            <p>₹${p.price}</p>
+
+            ${
+                p.outOfStock
+                ? `<p class="out-stock">Out of Stock</p>`
+                : `<button class="order-btn"
+                        onclick="orderWhatsApp('${p.name}', '${p.price}')">
+                        Order on WhatsApp
+                   </button>`
+            }
+        </div>
+    `;
+});
+
+/* WHATSAPP ORDER */
+function orderWhatsApp(name, price) {
+    const msg = `Hello 👋
+I want to order this product:
+
+📦 Product: ${name}
+💰 Price: ₹${price}
+
+Please share the QR code for payment.`;
+
+    window.open(`https://wa.me/917418931545?text=${encodeURIComponent(msg)}`);
+}
+</script>
+
+</body>
+</html>
